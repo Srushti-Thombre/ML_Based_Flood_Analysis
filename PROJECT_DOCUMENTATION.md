@@ -486,8 +486,6 @@ Step 4: Visualization & Export
 4. **Explain the pipeline** – Walk through Cells 1-7 (basic analysis), then Cells 19-24 (advanced features)
 5. **Clarify the insight** – "Hydrology features enhance the data but work behind the scenes in the tooltips, not as separate map layers"
 
-Good luck with your presentation! 🚀
-
 ---
 
 ---
@@ -756,5 +754,3 @@ OUTPUT DATA
 - [ ] **Call to action** → Suggest next steps (e.g., validate against historical floods, refine model)
 
 ---
-
-Good luck with your presentation! 🚀
