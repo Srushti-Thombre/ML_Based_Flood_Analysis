@@ -487,3 +487,274 @@ Step 4: Visualization & Export
 5. **Clarify the insight** – "Hydrology features enhance the data but work behind the scenes in the tooltips, not as separate map layers"
 
 Good luck with your presentation! 🚀
+
+---
+
+---
+
+# PROBLEM STATEMENT & INTRODUCTION SCRIPT
+
+## Problem Statement
+
+**Title:** Data-Driven Flood Vulnerability Assessment for Urban Areas Using Clustering-Based Spatial Analysis
+
+### Problem Definition
+
+Urban flooding poses significant risks to infrastructure and populations, particularly in low-lying coastal and riverine areas like Kurla, Mumbai. Traditional flood risk assessments rely on historical flood data or simple proximity metrics, which may not capture the spatial heterogeneity of buildings and their unique vulnerability profiles.
+
+**Key Challenges:**
+
+1. **Complex Risk Factors** – Flood vulnerability depends on multiple interrelated factors (elevation, proximity to waterways, slope, terrain variability, and drainage patterns), not just single indicators
+2. **Data Integration** – Combining vector data (buildings, waterway networks) with raster data (terrain/elevation models) requires sophisticated geospatial processing
+3. **Scalability** – Manual flood risk assessment is impractical for large urban areas; automation is needed
+4. **Actionability** – Decision-makers require both visual (map-based) and tabular (feature-based) outputs for urban planning
+
+### Objectives
+
+This project develops a **data-driven, unsupervised learning approach** to:
+
+1. **Automatically classify buildings** into flood risk categories (High/Medium/Low) using multi-feature spatial analysis
+2. **Integrate multi-source geospatial data** – combining OpenStreetMap building/waterway data with digital elevation models
+3. **Engineer meaningful features** that capture terrain complexity (slope, local relief) and hydrology (distance to waterways, drainage density)
+4. **Create interactive, actionable outputs** (web maps, GIS-compatible datasets) for urban planners and disaster management agencies
+5. **Provide transparency** in the clustering process by mapping features to risk classifications
+
+### Solution Approach
+
+The project uses **K-Means unsupervised clustering** to partition buildings into flood risk tiers based on engineered features, then visualizes results in an interactive web map with rich feature tooltips for exploratory analysis.
+
+---
+
+## Introduction Script for Presentation
+
+### Opening Hook
+
+_"Urban flooding is increasingly common in Indian cities. When it rains, some buildings flood and others don't—not randomly, but due to **geography**. This project answers: Can we predict which buildings are at risk by analyzing terrain, elevation, and proximity to water? And can we do it automatically?"_
+
+---
+
+### Part 1: The Complete Feature Suite
+
+This project computes **8 engineered features** for every building in the study area:
+
+#### **Hydro-Terrain Features**
+
+| Feature          | Description                                  | Data Source           | Unit    | Why It Matters                           |
+| ---------------- | -------------------------------------------- | --------------------- | ------- | ---------------------------------------- |
+| `elevation`      | Mean elevation of building location from DEM | Rasterio (kurla.tif)  | meters  | Higher buildings are safer from floods   |
+| `slope_deg`      | Ground steepness around building             | DEM gradient analysis | degrees | Steeper slopes drain water faster        |
+| `local_relief_m` | Local elevation variation (3×3 pixel window) | DEM analysis          | meters  | Rougher terrain holds flood water longer |
+
+#### **Proximity to Water Features**
+
+| Feature                  | Description                                             | Data Source            | Unit   | Why It Matters                             |
+| ------------------------ | ------------------------------------------------------- | ---------------------- | ------ | ------------------------------------------ |
+| `dist_to_river`          | Distance to ANY waterway (rivers, streams)              | OSM waterway tags      | meters | Closer to rivers = higher flood risk       |
+| `dist_to_major_waterway` | Distance to longest/major rivers only (75th percentile) | Filtered OSM waterways | meters | Major rivers are primary flood sources     |
+| `dist_to_drainage_m`     | Distance to drainage features (drains, ditches, canals) | OSM drain/ditch tags   | meters | Drainage infrastructure may fail in floods |
+
+#### **Hydrology & Density Features**
+
+| Feature                 | Description                                        | Data Source          | Unit | Why It Matters                                  |
+| ----------------------- | -------------------------------------------------- | -------------------- | ---- | ----------------------------------------------- |
+| `waterway_density_300m` | Total waterway length per unit area in 300m radius | Spatial buffer + OSM | m/m² | High density = complex hydrology, slow drainage |
+
+---
+
+### Part 2: The K-Means Clustering Model
+
+#### What is K-Means?
+
+K-Means is an **unsupervised machine learning algorithm** that groups similar data points into clusters. It works by:
+
+1. **Randomly placing 3 cluster centers** (for our case: k=3)
+2. **Assigning each building** to the nearest cluster center
+3. **Recalculating cluster centers** based on member averages
+4. **Repeating** until centers stabilize
+
+#### Why K-Means for Flood Risk?
+
+- ✅ **No labeled training data needed** – We don't have historical "flooded vs. non-flooded" labels
+- ✅ **Automatic categorization** – Naturally groups buildings into risk tiers
+- ✅ **Interpretable results** – Cluster centers show average feature values, revealing what defines each risk level
+- ✅ **Scalable** – Works efficiently on thousands of buildings
+
+#### Data Computation & Scaling
+
+**Input Features to K-Means (Cell 8):**
+
+```
+Selected: elevation, dist_to_river
+```
+
+**Critical Step – StandardScaler:**
+
+```python
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+```
+
+**Why scaling matters:**
+
+- `elevation` ranges ~0–50 meters
+- `dist_to_river` ranges ~0–5000 meters
+- Without scaling, distance dominates the model (5000 >> 50)
+- Scaling transforms both to mean=0, std=1, giving equal weight
+
+**K-Means Parameters:**
+
+```python
+kmeans = KMeans(
+    n_clusters=3,      # 3 risk categories (Low/Med/High)
+    random_state=42,   # Reproducible results
+    n_init=10          # Try 10 random starts, pick best
+)
+```
+
+#### How Clustering Produces Risk Labels
+
+After clustering, the algorithm produces **cluster IDs (0, 1, 2)**, but these are arbitrary. We **map them to risk labels** by analyzing cluster statistics:
+
+**Example Output from Clustering:**
+
+```
+Cluster 0: avg_elevation=12m, avg_dist_to_river=200m  → LOW elevation + CLOSE to river → HIGH RISK
+Cluster 1: avg_elevation=25m, avg_dist_to_river=1200m → MED elevation + MED distance → MEDIUM RISK
+Cluster 2: avg_elevation=40m, avg_dist_to_river=3000m → HIGH elevation + FAR from river → LOW RISK
+```
+
+This mapping is done in **Cell 8**, sorting clusters by elevation and assigning risk labels accordingly.
+
+---
+
+### Part 3: Advanced Features – How They Show (Or Don't!)
+
+#### The Advanced Feature Pipeline
+
+After basic clustering, **3 additional features are added** (Cells 19-24):
+
+```
+Cell 19 (Terrain)        → slope_deg, local_relief_m
+Cell 20 (Hydrology)      → dist_to_major_waterway, waterway_density_300m
+Cell 24 (Drainage)       → dist_to_drainage_m
+```
+
+#### How These Features Display
+
+| Feature                  | Where It Shows                                    | How                            |
+| ------------------------ | ------------------------------------------------- | ------------------------------ |
+| `slope_deg`              | Interactive Map Tooltip                           | Hover over any building        |
+| `local_relief_m`         | Interactive Map Tooltip                           | Hover over any building        |
+| `dist_to_major_waterway` | Interactive Map Tooltip + CSV Report + GeoPackage | Hover, or inspect export files |
+| `waterway_density_300m`  | Interactive Map Tooltip + CSV Report + GeoPackage | Hover, or inspect export files |
+| `dist_to_drainage_m`     | Interactive Map Tooltip + CSV Report + GeoPackage | Hover, or inspect export files |
+
+**Important:** These features do **NOT** create separate visual map layers or change building colors. They are:
+
+- ✅ Stored in the data for analysts
+- ✅ Visible in hover tooltips
+- ✅ Exported to CSV and GeoPackage for GIS analysis
+- ❌ NOT used in the K-Means clustering itself (only elevation + dist_to_river used)
+
+#### Why Not Use Them in Clustering?
+
+**Reason:** The basic model uses only `elevation` and `dist_to_river` (the most fundamental flood drivers). Advanced features provide **contextual information** for analysts exploring the data, but including them would:
+
+- Increase model complexity
+- Risk overfitting to local patterns
+- Make interpretation harder
+
+They're available for **post-hoc analysis** if you want to refine the model later.
+
+---
+
+### Part 4: Output Overview
+
+#### Four Outputs Delivered
+
+**1. Interactive Web Map** (`interactive_flood_map_enhanced.html`)
+
+- 🗺️ **Base:** OpenStreetMap tiles
+- 🏢 **Data:** Buildings colored by risk (Red=High, Orange=Medium, Green=Low)
+- 📍 **Interactivity:**
+  - Hover to see all 8 features in tooltip
+  - Zoom/pan to explore
+  - Toggle risk layers on/off via checkboxes
+- 👥 **Audience:** Urban planners, disaster management, general public
+
+**2. GeoPackage Export** (`flood_vulnerability_data_enhanced.gpkg`)
+
+- 📊 **Content:** Building geometries + all 8 computed features
+- 🔌 **Compatible:** Opens in QGIS, ArcGIS, PostGIS
+- 👥 **Audience:** GIS professionals, technical analysts
+
+**3. CSV Feature Report** (`flood_vulnerability_feature_report.csv`)
+
+- 📋 **Content:** Tabular data (no geometry) with all 8 features per building
+- 📈 **Uses:** Further statistical analysis, custom visualizations, Excel/Python workflows
+- 👥 **Audience:** Data scientists, researchers
+
+**4. Static PNG Map** (`flood_vulnerability_map.png`)
+
+- 🖼️ **Content:** Matplotlib visualization of buildings + rivers
+- 📄 **Uses:** Presentations, reports, posters
+- 👥 **Audience:** Decision-makers, presentations
+
+---
+
+#### Data Flow Summary
+
+```
+INPUT DATA
+├─ OpenStreetMap (OSM)
+│  ├─ Buildings (footprints)
+│  └─ Waterways (rivers, streams, drains, canals)
+└─ Digital Elevation Model (kurla.tif)
+
+PROCESSING PIPELINE
+├─ Cell 7: Extract elevation + dist_to_river
+├─ Cell 8: K-Means clustering → risk_level
+├─ Cell 19: Terrain analysis → slope + local_relief
+├─ Cell 20: Hydrology analysis → major waterway distance + density
+└─ Cell 24: Drainage analysis → drain distance
+
+OUTPUT DATA
+├─ 1,500+ buildings with 8 computed features
+├─ Risk labels (High/Medium/Low)
+└─ All exported to Map + GeoPackage + CSV
+```
+
+---
+
+### Part 5: Key Takeaways for Decision-Makers
+
+**What This Analysis Tells You:**
+
+1. ✅ **Which buildings are at highest risk** – Colored on the map in real-time
+2. ✅ **Why each building is at that risk level** – Hover to see elevation, waterway distances, terrain
+3. ✅ **Which areas need priority** – High-risk clusters visible at a glance
+4. ✅ **Data for detailed studies** – Export to GIS for neighborhood-level planning
+
+**Limitations to Communicate:**
+
+- ⚠️ Model is based on **current terrain & waterway data** (may not reflect future infrastructure changes)
+- ⚠️ Does **not account for flood history** (because historical data wasn't available)
+- ⚠️ **K-Means assumes buildings cluster naturally** (might not perfectly reflect reality)
+- ⚠️ Uses **elevation above sea level**, not storm surge/monsoon-specific modeling
+
+---
+
+### Presentation Checklist
+
+- [ ] **Show the map** → Open `interactive_flood_map_enhanced.html` in browser
+- [ ] **Demonstrate hover tooltips** → Show at least 3 buildings with different risk levels
+- [ ] **Toggle layers** → Hide/show each risk category
+- [ ] **Explain K-Means** → Show cluster statistics and mapping logic
+- [ ] **Highlight feature engineering** → Explain why each feature matters
+- [ ] **Show outputs** → Brief walk-through of CSV, GeoPackage, PNG
+- [ ] **State limitations** → Acknowledge uncertainty and future improvements
+- [ ] **Call to action** → Suggest next steps (e.g., validate against historical floods, refine model)
+
+---
+
+Good luck with your presentation! 🚀
