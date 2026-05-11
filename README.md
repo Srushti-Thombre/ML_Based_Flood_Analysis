@@ -65,6 +65,16 @@ Because K-Means is unsupervised, use clustering metrics (not supervised accuracy
 - Davies-Bouldin index
 - Calinski-Harabasz score
 
+## Output Screenshots:
+
+### Snapshot of output of the interactive Map:
+
+![Snapshot of output of the interactive Map](images/ssFullScreen.png)
+
+### Snapshot of Don Bsoco Institute of Technology:
+
+![Snapshot of Don Bsoco Institute of Technology](images/dbitss.png)
+
 ## Environment Setup
 
 ## 1) Create/activate Python environment
