@@ -1,5 +1,9 @@
 # Flood Vulnerability Mapping Project
 
+## Output(Deployment Link:)
+
+**[Flood Analysis of Kurla region (Ctrl + Click to open in a new tab)](kurla-flood-analysis.netlify.app)**
+
 ## Overview
 
 This project builds a **building-level flood vulnerability analysis** for Kurla (Mumbai) using:
