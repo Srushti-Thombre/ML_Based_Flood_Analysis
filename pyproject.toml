@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flood-analysis"
+version = "0.1.0"
+description = "Building-level flood vulnerability analysis for geospatial data"
+requires-python = ">=3.10"
+dependencies = [
+    "geopandas",
+    "osmnx",
+    "rasterio",
+    "rasterstats",
+    "pandas",
+    "numpy",
+    "scikit-learn",
+    "matplotlib",
+    "folium",
+    "datasets",
+    "duckdb",
+    "reportlab",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -1,0 +1,31 @@
+{
+  "folders": [
+	{
+		"path": "../../Srushti-Thombre"
+	},
+	{
+		"path": "../../Learning_DSA"
+	},
+	{
+		"path": "../../theOdinProject"
+	},
+	{
+		"path": "C:/Users/Thombre/OneDrive/Desktop/minor_project"
+	},
+	{
+		"path": "../../Portfolio"
+	},
+	{
+		"path": "../../dartpedia"
+	},
+	{
+		"path": "."
+	}
+],
+  "settings": {
+    "liveServer.settings.multiRootWorkspaceName": "theOdinProject",
+    "github.copilot.enable": {
+      "*": false
+    }
+  }
+}
