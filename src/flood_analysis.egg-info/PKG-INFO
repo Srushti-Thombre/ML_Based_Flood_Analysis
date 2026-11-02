@@ -1,0 +1,14 @@
+Metadata-Version: 2.4
+Name: flood-analysis
+Version: 0.1.0
+Summary: Building-level flood vulnerability analysis for geospatial data
+Requires-Python: >=3.10
+Requires-Dist: geopandas
+Requires-Dist: osmnx
+Requires-Dist: rasterio
+Requires-Dist: rasterstats
+Requires-Dist: pandas
+Requires-Dist: numpy
+Requires-Dist: scikit-learn
+Requires-Dist: matplotlib
+Requires-Dist: folium

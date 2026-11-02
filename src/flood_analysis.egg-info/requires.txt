@@ -1,0 +1,9 @@
+geopandas
+osmnx
+rasterio
+rasterstats
+pandas
+numpy
+scikit-learn
+matplotlib
+folium

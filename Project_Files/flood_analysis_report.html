@@ -1,0 +1,213 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Flood Analysis Report</title>
+<style>
+body { font-family: Arial, sans-serif; color: #243447; margin: 40px; line-height: 1.45; }
+h1, h2 { color: #164a63; } h1 { font-size: 30px; }
+.title { min-height: 420px; padding-top: 120px; border-bottom: 3px solid #2d7f9d; }
+.meta { color: #5b6770; } .risk-map { max-width: 720px; width: 100%; }
+.data-table { border-collapse: collapse; margin: 12px 0 24px; width: 100%; }
+.data-table th { background: #164a63; color: white; }
+.data-table td, .data-table th { border: 1px solid #c8d2d8; padding: 7px; text-align: left; }
+li { margin: 6px 0; } .page-break { page-break-before: always; }
+</style></head><body>
+<section class="title"><h1>Flood Vulnerability Analysis</h1>
+<h2>Kurla, Mumbai, India</h2><p class="meta">Generated: 2026-11-02 03:57:57<br>
+Version: 0.1.0</p></section>
+<h2>Executive Summary</h2>
+<p>The analysis processed 2285 buildings and assigned each to a
+three-cluster flood vulnerability grouping using elevation, distance,
+terrain, and hydrology features. The distribution and model diagnostics
+below are calculated from the current pipeline run.</p>
+<h2>Study Area</h2><p>The study area is defined by the OSM building extent for
+Kurla, Mumbai, India and the associated DEM coverage. Distances are calculated in
+projected metric coordinate systems, while map outputs use EPSG:4326.</p>
+<h2>Data Sources</h2><table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Source</th>
+      <th>Use</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>OpenStreetMap</td>
+      <td>Buildings and waterways</td>
+    </tr>
+    <tr>
+      <td>DEM</td>
+      <td>D:\MiniProjectTayyabsirDrive\clustering-based-flood-analysis\Project_Files\kurla.tif</td>
+    </tr>
+    <tr>
+      <td>K-Means</td>
+      <td>Unsupervised risk grouping</td>
+    </tr>
+  </tbody>
+</table>
+<h2>Feature Summary Statistics</h2><table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Feature</th>
+      <th>Mean</th>
+      <th>Median</th>
+      <th>Min</th>
+      <th>Max</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>elevation</td>
+      <td>9.440</td>
+      <td>9.000</td>
+      <td>-1.500</td>
+      <td>33.000</td>
+    </tr>
+    <tr>
+      <td>dist_to_river</td>
+      <td>313.962</td>
+      <td>249.416</td>
+      <td>0.000</td>
+      <td>1184.723</td>
+    </tr>
+    <tr>
+      <td>slope_deg</td>
+      <td>86.756</td>
+      <td>89.989</td>
+      <td>0.000</td>
+      <td>89.998</td>
+    </tr>
+    <tr>
+      <td>local_relief_m</td>
+      <td>4.008</td>
+      <td>4.000</td>
+      <td>0.000</td>
+      <td>19.000</td>
+    </tr>
+    <tr>
+      <td>dist_to_major_waterway</td>
+      <td>517.203</td>
+      <td>376.788</td>
+      <td>0.000</td>
+      <td>1735.036</td>
+    </tr>
+    <tr>
+      <td>waterway_density_300m</td>
+      <td>0.001</td>
+      <td>0.001</td>
+      <td>0.000</td>
+      <td>0.007</td>
+    </tr>
+    <tr>
+      <td>dist_to_drainage_m</td>
+      <td>333.373</td>
+      <td>274.075</td>
+      <td>0.000</td>
+      <td>1184.723</td>
+    </tr>
+  </tbody>
+</table>
+<h2>Risk Distribution</h2><table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Risk level</th>
+      <th>Buildings</th>
+      <th>Percentage</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>High Risk</td>
+      <td>1514</td>
+      <td>66.258</td>
+    </tr>
+    <tr>
+      <td>Medium Risk</td>
+      <td>82</td>
+      <td>3.589</td>
+    </tr>
+    <tr>
+      <td>Low Risk</td>
+      <td>689</td>
+      <td>30.153</td>
+    </tr>
+  </tbody>
+</table>
+<h2>Cluster Profiles</h2><table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Risk level</th>
+      <th>elevation</th>
+      <th>dist_to_river</th>
+      <th>slope_deg</th>
+      <th>local_relief_m</th>
+      <th>dist_to_major_waterway</th>
+      <th>waterway_density_300m</th>
+      <th>dist_to_drainage_m</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>High Risk</td>
+      <td>7.884</td>
+      <td>179.216</td>
+      <td>89.985</td>
+      <td>3.976</td>
+      <td>305.124</td>
+      <td>0.002</td>
+      <td>205.651</td>
+    </tr>
+    <tr>
+      <td>Low Risk</td>
+      <td>12.937</td>
+      <td>612.673</td>
+      <td>89.986</td>
+      <td>4.312</td>
+      <td>988.770</td>
+      <td>0.000</td>
+      <td>616.448</td>
+    </tr>
+    <tr>
+      <td>Medium Risk</td>
+      <td>8.780</td>
+      <td>291.919</td>
+      <td>0.000</td>
+      <td>2.049</td>
+      <td>470.614</td>
+      <td>0.001</td>
+      <td>313.030</td>
+    </tr>
+  </tbody>
+</table>
+<h2>Model Evaluation Metrics</h2><table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Metric</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Silhouette</td>
+      <td>0.385</td>
+    </tr>
+    <tr>
+      <td>Davies-Bouldin</td>
+      <td>0.925</td>
+    </tr>
+    <tr>
+      <td>Calinski-Harabasz</td>
+      <td>1065.079</td>
+    </tr>
+  </tbody>
+</table>
+<h2>Static Risk Map</h2><img class="risk-map" src="flood_vulnerability_map.png" alt="Static flood vulnerability map">
+<h2>Insights</h2><ul><li>High Risk is the largest risk group, containing 1514 buildings (66.3% of the study buildings).</li><li>The lowest mean elevation occurs in the High Risk group (7.884 m).</li><li>The High Risk group has the smallest average distance to waterways (179.216 m).</li></ul>
+
+<h2>Limitations and Future Work</h2><ul>
+<li>K-Means is unsupervised and risk labels are assigned by mean elevation.</li>
+<li>OSM coverage, DEM resolution, and historical grid resolution affect results.</li>
+<li>Future work may add validated flood observations and supervised models.</li>
+</ul>
+<h2>Appendix</h2><p>Features: elevation, dist_to_river, slope_deg, local_relief_m, dist_to_major_waterway, waterway_density_300m, dist_to_drainage_m</p>
+<p>Parameters: K-Means clusters=3, random_state=42, n_init=10;
+median imputation; standard scaling.</p>
+</body></html>
